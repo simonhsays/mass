@@ -56,6 +56,7 @@ class Mass(object):
             self,
             load_checkpoint,
             data_dir=None,
+            ckpt_file=None,
             verbose=True
     ):
         """Constructor.
@@ -80,26 +81,30 @@ class Mass(object):
 
         self.fs = 256  # Original sampling frequency [Hz]
         self.page_duration = 30  # Time of window page [s]
-
-        # Save attributes
-        if data_dir is None:
-            data_dir = utils.PATH_DATA
-            
-        dataset_dir = os.path.join(data_dir, PATH_MASS_RELATIVE)
-        if os.path.isabs(dataset_dir):
-            self.dataset_dir = dataset_dir
+        
+        if ckpt_file not None:
+            self.ckpt_file = ckpt_file
+            self.load_checkpoint = True
         else:
-            self.dataset_dir = os.path.abspath(
-                os.path.join(data_dir, dataset_dir))
-        # We verify that the directory exists
-        if not load_checkpoint:
-            checks.check_directory(self.dataset_dir)
+            # Save attributes
+            if data_dir is None:
+                data_dir = utils.PATH_DATA
+            
+            dataset_dir = os.path.join(data_dir, PATH_MASS_RELATIVE)
+            if os.path.isabs(dataset_dir):
+                self.dataset_dir = dataset_dir
+            else:
+                self.dataset_dir = os.path.abspath(
+                    os.path.join(data_dir, dataset_dir))
+            # We verify that the directory exists
+            if not load_checkpoint:
+                checks.check_directory(self.dataset_dir)
 
-        self.load_checkpoint = load_checkpoint
-        self.ckpt_dir = os.path.abspath(os.path.join(
-            self.dataset_dir, '..', 'ckpt_%s' % self.dataset_name))
-        self.ckpt_file = os.path.join(
-            self.ckpt_dir, '%s.pickle' % self.dataset_name)
+            self.load_checkpoint = load_checkpoint
+            self.ckpt_dir = os.path.abspath(os.path.join(
+                self.dataset_dir, '..', 'ckpt_%s' % self.dataset_name))
+            self.ckpt_file = os.path.join(
+                self.ckpt_dir, '%s.pickle' % self.dataset_name)
 
         # Data loading
         self.data = self._load_data(verbose=verbose)
