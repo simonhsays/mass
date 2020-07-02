@@ -82,7 +82,7 @@ class Mass(object):
         self.fs = 256  # Original sampling frequency [Hz]
         self.page_duration = 30  # Time of window page [s]
         
-        if ckpt_file not None:
+        if ckpt_file is not None:
             self.ckpt_file = ckpt_file
             self.load_checkpoint = True
         else:
